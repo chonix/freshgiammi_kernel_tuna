@@ -38,6 +38,7 @@
 #include <linux/i2c.h>
 #include <linux/uaccess.h>
 
+
 /* contrast tweak from morfic - Trinity Kernel */
 static int contrast = 0;
 module_param(contrast, int, 0755);
@@ -203,6 +204,14 @@ const u8 s6e8aa0_mtp_lock[] = {
 	0xA5,
 	0xA5,
 };
+
+#ifdef CONFIG_COLOR_CONTROL
+struct omap_dss_device * lcd_dev;
+
+struct s6e8aa0_data * s6_data;
+
+int v1_offset[3] = {0, 0, 0};
+#endif
 
 static int s6e8aa0_write_reg(struct omap_dss_device *dssdev, u8 reg, u8 val)
 {
@@ -778,11 +787,15 @@ static void s6e8aa0_setup_gamma_regs(struct s6e8aa0_data *s6, u8 gamma_regs[],
 				__func__, adj, v0, v[V1], c);
 			adj = clamp_t(int, adj, adj_min, adj_max);
 		}
+
 #ifdef CONFIG_COLOR_HACK
         int adj_hack = adj + ((hacky_v1_offset[c] * (int)adj) / 100);
         if (adj_hack > adj_max)
             adj_hack = adj_max;
         gamma_regs[gamma_reg_index(c, V1)] = adj_hack;
+
+#ifdef CONFIG_COLOR_CONTROL
+		gamma_regs[gamma_reg_index(c, V1)] = min(max(adj +  v1_offset[c], 0), 255);
 #else
 		gamma_regs[gamma_reg_index(c, V1)] = adj;
 #endif
@@ -1144,6 +1157,7 @@ static void s6e8aa0_adjust_brightness_from_mtp(struct s6e8aa0_data *s6)
 }
 
 
+
 #ifdef CONFIG_COLOR_HACK
 void ColorGammaUpdate(void)
 {
@@ -1165,6 +1179,22 @@ void brightnessUpdate(void)
         dsi_bus_unlock(lcd_);
     }
 }
+
+#ifdef CONFIG_COLOR_CONTROL
+void colorcontrol_update(bool multiplier_updated)
+{
+    if (multiplier_updated)
+	s6e8aa0_adjust_brightness_from_mtp(s6_data);
+
+    if (lcd_dev->state == OMAP_DSS_DISPLAY_ACTIVE) {
+	dsi_bus_lock(lcd_dev);
+	s6e8aa0_update_brightness(lcd_dev);
+	dsi_bus_unlock(lcd_dev);
+    }
+
+    return;
+}
+EXPORT_SYMBOL(colorcontrol_update);
 #endif
 
 static s16 s9_to_s16(s16 v)
@@ -1829,6 +1859,7 @@ static int s6e8aa0_probe(struct omap_dss_device *dssdev)
 	if (cpu_is_omap44xx())
 		s6->force_update = true;
 
+
 #ifdef CONFIG_COLOR_HACK
     misc_register(&samoled_color_device);
     if (sysfs_create_group(&samoled_color_device.this_device->kobj, &samoled_color_group) < 0)
@@ -1841,6 +1872,14 @@ static int s6e8aa0_probe(struct omap_dss_device *dssdev)
     original_color_adj_original_mults[0] = s6->pdata->factory_info->color_adj.mult[0];
     original_color_adj_original_mults[1] = s6->pdata->factory_info->color_adj.mult[1];
     original_color_adj_original_mults[2] = s6->pdata->factory_info->color_adj.mult[2];
+#endif
+
+#ifdef CONFIG_COLOR_CONTROL
+	lcd_dev = dssdev;
+	s6_data = s6;
+
+	colorcontrol_register_offset(v1_offset);
+	colorcontrol_register_multiplier(s6->pdata->factory_info->color_adj.mult);
 #endif
 
 	dev_dbg(&dssdev->dev, "s6e8aa0_probe\n");
