@@ -1,8 +1,8 @@
 VERSION = 3
 PATCHLEVEL = 0
 SUBLEVEL = 101
-EXTRAVERSION =
-NAME = Sodden Ben Lomond
+EXTRAVERSION = -freshgiammi-internaltesting-v1
+NAME = Freshgiammi
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
