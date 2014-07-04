@@ -1,4 +1,4 @@
-dayuVERSION = 3
+VERSION = 3
 PATCHLEVEL = 0
 SUBLEVEL = 101
 EXTRAVERSION = -freshgiammi-test-v2rev3
