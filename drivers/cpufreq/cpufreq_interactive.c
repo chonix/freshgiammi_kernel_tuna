@@ -104,7 +104,7 @@ static int boostpulse_duration_val = DEFAULT_BOOSTPULSE_DURATION;
  * The CPU will be boosted to this frequency when the screen is
  * touched. input_boost needs to be enabled.
  */
-#define DEFAULT_INPUT_BOOST_FREQ 953856
+#define DEFAULT_INPUT_BOOST_FREQ 920000
 static int input_boost_freq = DEFAULT_INPUT_BOOST_FREQ;
 extern u64 last_input_time;
 
