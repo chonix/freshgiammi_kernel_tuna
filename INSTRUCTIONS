@@ -1,0 +1,77 @@
+﻿# Welcome to FreshKernel! #
+This kernel is based on CM11 stable branch and aims to be stable and fast.
+
+Forking Instructions
+
+-Setting up build environment
+
+1. Make sure you have at least Ubuntu 12.04 with the following dependencies installed (git-all gnupg flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl libncurses5-dev zlib1g-dev ia32-libs lib32z1-dev lib32ncurses5-dev gcc-multilib g++-multilib android-adb android-fastboot )
+In case you don't, install them by doing "sudo apt-get install".
+
+2. Create a directory to help keep things organized. I like to make an "Android" folder and inside it a "Kernel" folder and a "Toolchain" folder.
+To do so, open the terminal and do "mkdir Android && cd Android/ && mkdir Kernel && mkdir Toolchain".
+
+3. Move to the kernel folder and clone the repository or the kernel source. 
+To clone mine, do "cd Android/Kernel/ && git clone https://github.com/freshgiammi/freshgiammi_kernel_tuna.git"
+
+(If you want to be more awesome, fork my repository on github and clone it! By doing so you can also cherry-pick commits from other repositories.)
+
+4. Now, clone the Toolchain you want.
+I use Cyanogenmod's one (GCC version 4.4.3). You can find it in https://github.com/DooMLoRD/android_prebuilt_toolchains
+Download it or clone it inside Android/Toolchain/ .
+
+5. Now the funny part! Modify the kernel as you want: Add schedulers, governors, apply patches etc.
+
+6. Get a configuration file.
+There are two ways to make this. You can also make your own, but i will talk about it later.
+
+-6.1 Pull a config file from your device.
+Connect your device to your PC via USB;
+Open a terminal;
+Go to your root kernel directory;
+Do " adb pull /proc/config.gz"
+Do "gunzip config.gz"
+Do "mv config arch/arm/configs/<your_config_name>_defconfig"
+
+-6.2 Use the manufacturer config.
+It is usually inside the arch/arm/configs/ folder. 
+As example, since my Galaxy Nexus is called Tuna, my manufacturer configuration file will be "tuna_defconfig".
+
+7. Building the kernel
+-7.1 Pre-Build (Do this every time you open a terminal to build the kernel)
+Do "export ARCH=arm"
+Do "export CROSS_COMPILE=~/Android/Toolchain/android_prebuilt_toolchains-master/arm-eabi-4.4.3/bin/arm-eabi-"
+
+-7.2 First time building
+Do "make <your_config_name>_defconfig"
+Do "make menuconfig" (opens a menu that helps you to select changes and modules) *
+Do "make -j<number of jobs per core> **
+
+* When you're done doing your configuration file, you can go to the end of the menu and save your configuration file as <your_config_name>.config. It will save a .config file inside the root of your kernel. Copy it to arch/arm/configs/ and change the name to <whatever you want>_defconfig. 
+Remember to do "make <wathever you want>_defconfig" after!
+
+** You should allow 1 job per core +1. So, if you're on a quad core computer, do "make -j5", while on a dual core "make -j3".
+
+-7.3 Build outside the first time
+Do "make clean"
+Do "make oldconfig" (or <whatever you want>_defconfig)
+Do "make -j<number of jobs per core>
+
+
+Et voilà! You'll have built your kernel! You can find it inside arch/arm/boot/ . It's called "zImage".
+Now you need a ramdisk, and a "mkbootimg" executive in order to create a boot.img .
+
+But what if the build fails? Get used to it, it will happen a lot of times. 
+Here's what to do:
+1. Backup your config file.
+2. Re-run the build process using just your defconfig from earlier.
+3. Do "make -j1", so you'll have less text to read in order to find the error.
+
+HAPPY BUILDING!
+
+
+
+
+
+
+
