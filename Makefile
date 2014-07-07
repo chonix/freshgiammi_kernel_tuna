@@ -1,7 +1,7 @@
 VERSION = 3
 PATCHLEVEL = 0
 SUBLEVEL = 101
-EXTRAVERSION = -freshgiammi-test-v2rev3
+EXTRAVERSION = -freshgiammi-test-v3rev1
 NAME = Freshgiammi
 
 # *DOCUMENTATION*
