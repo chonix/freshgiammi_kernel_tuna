@@ -34,7 +34,7 @@
 #include <linux/mutex.h>
 #include <linux/switch.h>
 #include <linux/wakelock.h>
-#include <linux fastchg.h>
+#include <linux/fastchg.h>
 
 #include <plat/usb.h>
 
