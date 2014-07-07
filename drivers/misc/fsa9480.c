@@ -523,8 +523,8 @@ static int fsa9480_detect_callback(struct otg_id_notifier_block *nb)
  		_detected(usbsw, FSA9480_DETECT_CHARGER);
  		} else {
  		_detected(usbsw, FSA9480_DETECT_USB);
- 	}
- +#else
+ 	        }
+#else
 		_detected(usbsw, FSA9480_DETECT_USB);
 #endif
 		goto handled;
