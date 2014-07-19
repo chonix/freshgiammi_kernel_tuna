@@ -780,8 +780,9 @@ static void s6e8aa0_setup_gamma_regs(struct s6e8aa0_data *s6, u8 gamma_regs[],
         int adj_hack = adj + ((hacky_v1_offset[c] * (int)adj) / 100);
         if (adj_hack > adj_max)
             adj_hack = adj_max;
-        gamma_regs[gamma_reg_index(c, V1)] = adj_hack;
-=======
+        gamma_regs[gamma_reg_index(c, V1)] = adj_hack
+#endif
+
 #ifdef CONFIG_COLOR_CONTROL
 		gamma_regs[gamma_reg_index(c, V1)] = ((adj + hacky_v1_offset[c]) > 0 && (adj <=255)) ? (adj + hacky_v1_offset[c]) : adj;
 #else
@@ -1861,6 +1862,8 @@ static int s6e8aa0_probe(struct omap_dss_device *dssdev)
     original_color_adj_original_mults[0] = s6->pdata->factory_info->color_adj.mult[0];
     original_color_adj_original_mults[1] = s6->pdata->factory_info->color_adj.mult[1];
     original_color_adj_original_mults[2] = s6->pdata->factory_info->color_adj.mult[2];
+#endif
+    
 #ifdef CONFIG_COLOR_CONTROL
 	lcd_dev = dssdev;
 #endif
