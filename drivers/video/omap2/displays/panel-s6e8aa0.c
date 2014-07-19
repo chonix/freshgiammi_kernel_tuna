@@ -793,6 +793,7 @@ static void s6e8aa0_setup_gamma_regs(struct s6e8aa0_data *s6, u8 gamma_regs[],
         if (adj_hack > adj_max)
             adj_hack = adj_max;
         gamma_regs[gamma_reg_index(c, V1)] = adj_hack;
+#endif
 
 #ifdef CONFIG_COLOR_CONTROL
 		gamma_regs[gamma_reg_index(c, V1)] = min(max(adj +  v1_offset[c], 0), 255);
@@ -1179,6 +1180,7 @@ void brightnessUpdate(void)
         dsi_bus_unlock(lcd_);
     }
 }
+#endif
 
 #ifdef CONFIG_COLOR_CONTROL
 void colorcontrol_update(bool multiplier_updated)
